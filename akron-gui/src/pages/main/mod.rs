@@ -10,8 +10,8 @@ mod state;
 use iced::{
     clipboard, time,
     widget::{
-        button, center, column, container, progress_bar, row, text, vertical_rule, vertical_space,
-        Column, Stack,
+        button, center, column, container, progress_bar, row, svg, text, vertical_rule,
+        vertical_space, Column, Stack,
     },
     Center, Color, Element, Fill, Font, Padding, Subscription, Task, Theme,
 };
@@ -770,6 +770,9 @@ impl State {
             }))
             .push(row![
                 column![
+                    svg(svg::Handle::from_memory(include_bytes!(
+                        "../../../../assets/akron.svg"
+                    ))),
                     navbar_button("Home", Icon::Bitcoin, Route::Home, Screen::Home,),
                     navbar_button("Send", Icon::ArrowBigUpDash, Route::Send, Screen::Send,),
                     navbar_button(

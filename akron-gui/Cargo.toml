@@ -20,6 +20,7 @@ iced = { version = "0.13.1", default-features = false, features = [
     "tokio",
     "qr_code",
     "advanced",
+    "svg"
 ] }
 jsonrpsee = { version = "0.22.5", features = ["http-client"] }
 hex = "0.4.3"
