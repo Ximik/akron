@@ -393,7 +393,7 @@ impl State {
                 row![
                     horizontal_space(),
                     column![
-                        text_icon(Icon::Wallet).size(150),
+                        text_icon(Icon::WalletMinimal).size(150),
                         text_bold("Create a new spaces wallet"),
                         submit_button("Continue", Some(Message::CreateWallet)),
                     ]
