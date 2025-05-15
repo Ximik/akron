@@ -7,15 +7,18 @@ mod sign;
 mod spaces;
 mod state;
 
+use iced::{
+    clipboard, time,
+    widget::{
+        button, center, column, container, progress_bar, row, text, vertical_rule, vertical_space,
+        Column, Stack,
+    },
+    Center, Color, Element, Fill, Font, Padding, Subscription, Task, Theme,
+};
 use std::collections::VecDeque;
 use std::time::Duration;
-use iced::{clipboard, time, widget::{
-    button, center, column, container, progress_bar, row, text, vertical_rule, vertical_space,
-    Column, Stack,
-}, Center, Color, Element, Fill, Font, Padding, Subscription, Task, Theme};
 
-use iced::widget::{horizontal_rule, scrollable};
-use iced::widget::button::Status;
+use crate::widget::text::text_small;
 use crate::{
     client::*,
     widget::{
@@ -24,7 +27,8 @@ use crate::{
     },
     Config,
 };
-use crate::widget::text::text_small;
+use iced::widget::button::Status;
+use iced::widget::{horizontal_rule, scrollable};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Screen {
@@ -37,8 +41,8 @@ enum Screen {
     Settings,
 }
 
-const EXPANDED_LOGS_HEIGHT : u16 = 280;
-const MAX_LOGS_BUFFER : usize = 50;
+const EXPANDED_LOGS_HEIGHT: u16 = 280;
+const MAX_LOGS_BUFFER: usize = 50;
 
 #[derive(Debug)]
 pub struct State {
@@ -103,8 +107,7 @@ pub enum Action {
 
 impl State {
     pub fn run(config: Config, client: Client) -> (Self, Task<Message>) {
-        let logs_rx = client.logs
-            .as_ref().map(|l| l.subscribe());
+        let logs_rx = client.logs.as_ref().map(|l| l.subscribe());
 
         let state = Self {
             config,
@@ -262,7 +265,7 @@ impl State {
                     }
                 }
                 Action::Task(Task::none())
-            },
+            }
             Message::Tick => {
                 let mut tasks = vec![self.get_server_info(), self.get_wallet_info()];
                 match self.screen {
@@ -416,9 +419,7 @@ impl State {
                         amount,
                         fee_rate,
                     )
-                    .map(|r| {
-                        Message::SendScreen(send::Message::ClientResult(r.result))
-                    }),
+                    .map(|r| Message::SendScreen(send::Message::ClientResult(r.result))),
                 send::Action::SendSpace {
                     recipient,
                     slabel,
@@ -431,9 +432,7 @@ impl State {
                         slabel,
                         fee_rate,
                     )
-                    .map(|r| {
-                        Message::SendScreen(send::Message::ClientResult(r.result))
-                    }),
+                    .map(|r| Message::SendScreen(send::Message::ClientResult(r.result))),
                 send::Action::ShowTransactions => self.navigate_to(Route::Home),
                 send::Action::None => Task::none(),
             }),
@@ -459,9 +458,7 @@ impl State {
                             amount,
                             fee_rate,
                         )
-                        .map(|r| {
-                            Message::SpacesScreen(spaces::Message::ClientResult(r.result))
-                        }),
+                        .map(|r| Message::SpacesScreen(spaces::Message::ClientResult(r.result))),
                     spaces::Action::BidSpace {
                         slabel,
                         amount,
@@ -474,9 +471,7 @@ impl State {
                             amount,
                             fee_rate,
                         )
-                        .map(|r| {
-                            Message::SpacesScreen(spaces::Message::ClientResult(r.result))
-                        }),
+                        .map(|r| Message::SpacesScreen(spaces::Message::ClientResult(r.result))),
                     spaces::Action::RegisterSpace { slabel, fee_rate } => self
                         .client
                         .register_space(
@@ -484,9 +479,7 @@ impl State {
                             slabel,
                             fee_rate,
                         )
-                        .map(|r| {
-                            Message::SpacesScreen(spaces::Message::ClientResult(r.result))
-                        }),
+                        .map(|r| Message::SpacesScreen(spaces::Message::ClientResult(r.result))),
                     spaces::Action::RenewSpace { slabel, fee_rate } => self
                         .client
                         .renew_space(
@@ -494,9 +487,7 @@ impl State {
                             slabel,
                             fee_rate,
                         )
-                        .map(|r| {
-                            Message::SpacesScreen(spaces::Message::ClientResult(r.result))
-                        }),
+                        .map(|r| Message::SpacesScreen(spaces::Message::ClientResult(r.result))),
                     spaces::Action::ShowTransactions => self.navigate_to(Route::Home),
                     spaces::Action::None => Task::none(),
                 })
@@ -709,17 +700,17 @@ impl State {
             }))
             .push(row![
                 column![
-                    navbar_button("Home", Icon::CurrencyBitcoin, Route::Home, Screen::Home,),
-                    navbar_button("Send", Icon::ArrowDownFromArc, Route::Send, Screen::Send,),
+                    navbar_button("Home", Icon::Bitcoin, Route::Home, Screen::Home,),
+                    navbar_button("Send", Icon::ArrowBigUpDash, Route::Send, Screen::Send,),
                     navbar_button(
                         "Receive",
-                        Icon::ArrowDownToArc,
+                        Icon::ArrowBigDownDash,
                         Route::Receive,
                         Screen::Receive,
                     ),
-                    navbar_button("Spaces", Icon::At, Route::Spaces, Screen::Spaces,),
-                    navbar_button("Market", Icon::BuildingBank, Route::Market, Screen::Market,),
-                    navbar_button("Sign", Icon::Signature, Route::Sign, Screen::Sign,),
+                    navbar_button("Spaces", Icon::AtSign, Route::Spaces, Screen::Spaces,),
+                    navbar_button("Market", Icon::Store, Route::Market, Screen::Market,),
+                    navbar_button("Sign", Icon::UserRoundPen, Route::Sign, Screen::Sign,),
                     vertical_space(),
                     navbar_button(
                         "Settings",
@@ -805,7 +796,6 @@ impl State {
             ])
             .push_maybe(self.logs_view())
             .into()
-
     }
 
     pub fn logs_view(&self) -> Option<Element<Message>> {
@@ -814,18 +804,14 @@ impl State {
         }
 
         let logs_expanded = self.logs_height != 0;
-        let toggle_txt = if logs_expanded {
-            "▾"
-        } else {
-            "▸"
-        };
+        let toggle_txt = if logs_expanded { "▾" } else { "▸" };
         let toggle_btn = button(text(toggle_txt).size(26))
             .padding([0, 10])
-            .style(|theme : &Theme, s| {
+            .style(|theme: &Theme, s| {
                 let palette = theme.extended_palette();
 
                 let bg = match s {
-                    Status::Active   => Color::TRANSPARENT.into(),
+                    Status::Active => Color::TRANSPARENT.into(),
                     _ => palette.secondary.strong.color.into(),
                 };
 
@@ -838,42 +824,45 @@ impl State {
             })
             .on_press(Message::ToggleLogs);
 
-
         let (log_header, logs) = if logs_expanded {
-            (text_small("Status: "), Some(container(
-                scrollable(
-                    column(
-                        self.log_buffer
-                            .iter()
-                            .map(|line|
-                                text_small(line.clone())
-                                    .color(Color::BLACK)
-                                    .font(Font::MONOSPACE)
-                                    .into()
-                            )
-                            .collect::<Vec<_>>()
+            (
+                text_small("Status: "),
+                Some(
+                    container(
+                        scrollable(column(
+                            self.log_buffer
+                                .iter()
+                                .map(|line| {
+                                    text_small(line.clone())
+                                        .color(Color::BLACK)
+                                        .font(Font::MONOSPACE)
+                                        .into()
+                                })
+                                .collect::<Vec<_>>(),
+                        ))
+                        .width(Fill)
+                        .height(Fill)
+                        .anchor_bottom(),
                     )
-                )
-                    .width(Fill)
-                    .height(Fill)
-                    .anchor_bottom()
-            )
-                .padding(Padding {
-                    top: 0.0,
-                    right: 10.0,
-                    bottom: 10.0,
-                    left: 10.0,
-                })
-                .height(self.logs_height)
-                .width(Fill)))
-        } else {
-            (text_small(
-                self.log_buffer
-                    .back()
-                    .map(|s| s.to_string()).unwrap_or("".to_string())
-
+                    .padding(Padding {
+                        top: 0.0,
+                        right: 10.0,
+                        bottom: 10.0,
+                        left: 10.0,
+                    })
+                    .height(self.logs_height)
+                    .width(Fill),
                 ),
-            None
+            )
+        } else {
+            (
+                text_small(
+                    self.log_buffer
+                        .back()
+                        .map(|s| s.to_string())
+                        .unwrap_or("".to_string()),
+                ),
+                None,
             )
         };
 
@@ -881,30 +870,37 @@ impl State {
             let palette = theme.extended_palette();
             container::Style {
                 text_color: None,
-                background: if !logs_expanded { Some(palette.background.weak.color.into()) } else { None },
+                background: if !logs_expanded {
+                    Some(palette.background.weak.color.into())
+                } else {
+                    None
+                },
                 border: Default::default(),
                 shadow: Default::default(),
             }
         };
 
         let status_row = row![
-            log_header, iced::widget::Space::with_width(Fill), toggle_btn,
-        ].padding(Padding {
+            log_header,
+            iced::widget::Space::with_width(Fill),
+            toggle_btn,
+        ]
+        .padding(Padding {
             top: 0.0,
             right: 0.0,
             bottom: 0.0,
             left: 10.0,
-        }).align_y(Center);
+        })
+        .align_y(Center);
 
-        let view = container(column![
-            horizontal_rule(3),
-            status_row,
-        ]
-            .push_maybe(logs)
-            .push(horizontal_rule(3))
-            .width(Fill))
-            .width(Fill)
-            .style(logs_style);
+        let view = container(
+            column![horizontal_rule(3), status_row,]
+                .push_maybe(logs)
+                .push(horizontal_rule(3))
+                .width(Fill),
+        )
+        .width(Fill)
+        .style(logs_style);
 
         Some(view.into())
     }
@@ -919,8 +915,7 @@ impl State {
         )
         .map(|_| Message::Tick);
 
-        let logs = time::every(Duration::from_millis(200))
-            .map(|_| Message::DrainLogs);
+        let logs = time::every(Duration::from_millis(200)).map(|_| Message::DrainLogs);
         Subscription::batch([ticks, logs])
     }
 }
