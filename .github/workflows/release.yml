@@ -164,6 +164,18 @@ jobs:
           "@
           & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "target\${{ matrix.target }}\release\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
           Compress-Archive -Path "target\${{ matrix.target }}\release\akron-gui.exe" -DestinationPath "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" -Force
+        
+          # Debug - List contents of working directory
+          Get-ChildItem -Path .
+          
+          # Make sure archive exists and has content
+          if (Test-Path "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip") {
+              $fileSize = (Get-Item "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip").Length
+              Write-Host "Zip archive created successfully: akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip (Size: $fileSize bytes)"
+          } else {
+              Write-Host "ERROR: Zip file was not created!"
+              exit 1
+          }
 
       - name: Create GitHub Release
         id: create_release
