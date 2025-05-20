@@ -163,10 +163,11 @@ jobs:
           END
           "@
           & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "target\${{ matrix.target }}\release\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
-          Compress-Archive -Path "target\${{ matrix.target }}\release\akron-gui.exe" -DestinationPath "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" -Force
+          7z a -tzip "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" ".\target\${{ matrix.target }}\release\akron-gui.exe"
         
           # Debug - List contents of working directory
           Get-ChildItem -Path .
+          Get-ChildItem -Path ".\target\${{ matrix.target }}\release\"
           
           # Make sure archive exists and has content
           if (Test-Path "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip") {
