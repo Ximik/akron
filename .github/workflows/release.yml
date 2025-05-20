@@ -176,7 +176,9 @@ jobs:
           
           # Add icon to executable
           Write-Host "Running Resource Hacker..."
-          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open $sourceExe -save $targetExe -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
+          $reshackCmd = """C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe"" -open ""$sourceExe"" -save ""$targetExe"" -action addoverwrite -res ""akron.ico"" -mask ICONGROUP,MAINICON,"
+          Write-Host "Command: $reshackCmd"
+          cmd /c $reshackCmd
           
           # Check if target EXE was created
           if (Test-Path $targetExe) {
