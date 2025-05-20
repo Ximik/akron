@@ -136,7 +136,7 @@ jobs:
         run: |
           choco install imagemagick.app -y
           choco install reshack -y
-          
+
           magick convert assets/akron.png -define icon:auto-resize=16,32,48,64 akron.ico
 
           Set-Content -Path akron.rc -Value @"
@@ -162,12 +162,8 @@ jobs:
               END
           END
           "@
-          Copy-Item "target\${{ matrix.target }}\release\akron-gui.exe" "target\${{ matrix.target }}\release\akron-gui.original.exe"
-          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.original.exe" -save "target\${{ matrix.target }}\release\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
-
-          New-Item -ItemType Directory -Path "tmp" -Force
-          Copy-Item "target\${{ matrix.target }}\release\akron-gui.exe" "tmp\akron-gui.exe"
-          Compress-Archive -Path "tmp\akron-gui.exe" -DestinationPath "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" -Force
+          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "target\${{ matrix.target }}\release\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
+          Compress-Archive -Path "target\${{ matrix.target }}\release\akron-gui.exe" -DestinationPath "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" -Force
 
       - name: Create GitHub Release
         id: create_release
