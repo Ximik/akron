@@ -130,14 +130,15 @@ jobs:
           codesign --verify --verbose akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}/Akron.app
           ditto -c -k --keepParent akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }} akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip 
 
-      - name: Install tools for Windows icon conversion and embedding
+      - name: Create Windows bundle
         if: env.OS == 'windows'
-        shell: bash
+        shell: powershell
         run: |
           choco install imagemagick.app -y
-          magick convert assets/akron.png -define icon:auto-resize=16,32,48,64 akron.ico
-          
           choco install reshack -y
+          
+          magick convert assets/akron.png -define icon:auto-resize=16,32,48,64 akron.ico
+
           Set-Content -Path akron.rc -Value @"
           MAINICON ICON "akron.ico"
           1 VERSIONINFO
