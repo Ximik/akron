@@ -134,13 +134,88 @@ jobs:
         if: env.OS == 'windows'
         shell: powershell
         run: |
+          Write-Host "Starting Windows bundle creation..."
+          
+          # Install tools
+          Write-Host "Installing ImageMagick..."
           choco install imagemagick.app -y
+          
+          Write-Host "Installing Resource Hacker..."
           choco install reshack -y
-
-          mkdir "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}"
+          
+          # Create output directory
+          $outputDir = "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}"
+          Write-Host "Creating output directory: $outputDir"
+          mkdir $outputDir -Force
+          
+          # Convert PNG to ICO
+          Write-Host "Converting PNG to ICO..."
           magick convert assets/akron.png -define icon:auto-resize=16,32,48,64 akron.ico
-          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
-          7z a -tzip "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}"
+          
+          # Check if ICO was created
+          if (Test-Path "akron.ico") {
+              Write-Host "ICO file created successfully"
+              $icoSize = (Get-Item "akron.ico").Length
+              Write-Host "ICO file size: $icoSize bytes"
+          } else {
+              Write-Host "ERROR: ICO file was not created!"
+          }
+          
+          # Check if source EXE exists
+          $sourceExe = "target\${{ matrix.target }}\release\akron-gui.exe"
+          $targetExe = "$outputDir\akron-gui.exe"
+          
+          if (Test-Path $sourceExe) {
+              Write-Host "Source EXE found: $sourceExe"
+              $exeSize = (Get-Item $sourceExe).Length
+              Write-Host "EXE file size: $exeSize bytes"
+          } else {
+              Write-Host "ERROR: Source EXE not found: $sourceExe"
+              Get-ChildItem -Path "target\${{ matrix.target }}\release" -ErrorAction SilentlyContinue
+          }
+          
+          # Add icon to executable
+          Write-Host "Running Resource Hacker..."
+          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open $sourceExe -save $targetExe -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
+          
+          # Check if target EXE was created
+          if (Test-Path $targetExe) {
+              Write-Host "Target EXE created successfully: $targetExe"
+              $outExeSize = (Get-Item $targetExe).Length
+              Write-Host "Output EXE file size: $outExeSize bytes"
+          } else {
+              Write-Host "ERROR: Target EXE was not created: $targetExe"
+          }
+          
+          # Create ZIP
+          $zipFile = "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip"
+          Write-Host "Creating ZIP: $zipFile from directory: $outputDir"
+          7z a -tzip $zipFile $outputDir
+          
+          # Check if ZIP was created
+          if (Test-Path $zipFile) {
+              Write-Host "ZIP file created successfully: $zipFile"
+              $zipSize = (Get-Item $zipFile).Length
+              Write-Host "ZIP file size: $zipSize bytes"
+          } else {
+              Write-Host "ERROR: ZIP file was not created: $zipFile"
+              
+              # Try alternate ZIP method
+              Write-Host "Trying alternate ZIP method..."
+              Compress-Archive -Path $outputDir -DestinationPath $zipFile -Force
+              
+              if (Test-Path $zipFile) {
+                  Write-Host "ZIP created with Compress-Archive: $zipFile"
+                  $zipSize = (Get-Item $zipFile).Length
+                  Write-Host "ZIP file size: $zipSize bytes"
+              } else {
+                  Write-Host "ERROR: ZIP still not created with Compress-Archive"
+              }
+          }
+          
+          # Show all files in current directory
+          Write-Host "Files in current directory:"
+          Get-ChildItem -Path .
 
       - name: Create GitHub Release
         id: create_release
