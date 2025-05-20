@@ -176,7 +176,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ${{ env.OS == 'linux' && format('akron-{0}-{1}-{2}.tar.gz', env.TAG, env.OS, env.ARCH) || format('akron-{0}-{1}-{2}.zip', env.TAG, env.OS, env.ARCH) }}
+            akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.${{ env.OS == 'linux' && 'tar.gz' || 'zip' }}
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
