@@ -137,60 +137,10 @@ jobs:
           choco install imagemagick.app -y
           choco install reshack -y
 
+          mkdir "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}"
           magick convert assets/akron.png -define icon:auto-resize=16,32,48,64 akron.ico
-
-          Set-Content -Path akron.rc -Value @"
-          MAINICON ICON "akron.ico"
-          1 VERSIONINFO
-          FILEVERSION 1,0,0,0
-          PRODUCTVERSION 1,0,0,0
-          BEGIN
-              BLOCK "StringFileInfo"
-              BEGIN
-                  BLOCK "040904E4"
-                  BEGIN
-                      VALUE "CompanyName", "Impervious"
-                      VALUE "FileDescription", "Akron GUI"
-                      VALUE "FileVersion", "${{ env.TAG }}"
-                      VALUE "ProductName", "Akron"
-                      VALUE "ProductVersion", "${{ env.TAG }}"
-                  END
-              END
-              BLOCK "VarFileInfo"
-              BEGIN
-                  VALUE "Translation", 0x409, 1252
-              END
-          END
-          "@
-          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "target\${{ matrix.target }}\release\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
-
-
-          Write-Host "Creating ZIP archive..."
-          $zipFile = "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" 
-          $exePath = "target\${{ matrix.target }}\release\akron-gui.exe"
-          
-          Write-Host "ZIP file: $zipFile"
-          Write-Host "EXE path: $exePath"
-          Write-Host "Does EXE exist? $(Test-Path $exePath)"
-          
-          Write-Host "Calling 7z with verbose output:"
-          7z a -v $zipFile $exePath
-          
-          Write-Host "7z return code: $LASTEXITCODE"
-          Write-Host "Does ZIP exist now? $(Test-Path $zipFile)"
-        
-          # Debug - List contents of working directory
-          Get-ChildItem -Path .
-          Get-ChildItem -Path ".\target\${{ matrix.target }}\release\"
-          
-          # Make sure archive exists and has content
-          if (Test-Path "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip") {
-              $fileSize = (Get-Item "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip").Length
-              Write-Host "Zip archive created successfully: akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip (Size: $fileSize bytes)"
-          } else {
-              Write-Host "ERROR: Zip file was not created!"
-              exit 1
-          }
+          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
+          7z a -tzip "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}"
 
       - name: Create GitHub Release
         id: create_release
