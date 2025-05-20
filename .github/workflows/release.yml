@@ -163,7 +163,21 @@ jobs:
           END
           "@
           & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "target\${{ matrix.target }}\release\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
-          cmd /c 7z a "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" "target\${{ matrix.target }}\release\akron-gui.exe"
+
+
+          Write-Host "Creating ZIP archive..."
+          $zipFile = "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip" 
+          $exePath = "target\${{ matrix.target }}\release\akron-gui.exe"
+          
+          Write-Host "ZIP file: $zipFile"
+          Write-Host "EXE path: $exePath"
+          Write-Host "Does EXE exist? $(Test-Path $exePath)"
+          
+          Write-Host "Calling 7z with verbose output:"
+          7z a -v $zipFile $exePath
+          
+          Write-Host "7z return code: $LASTEXITCODE"
+          Write-Host "Does ZIP exist now? $(Test-Path $zipFile)"
         
           # Debug - List contents of working directory
           Get-ChildItem -Path .
