@@ -136,11 +136,18 @@ jobs:
         run: |
           choco install imagemagick.app -y
           choco install reshack -y
-
-          mkdir "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}"
           magick convert assets/akron.png -define icon:auto-resize=16,32,48,64 akron.ico
-          & 'C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe' -open "target\${{ matrix.target }}\release\akron-gui.exe" -save "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}\akron-gui.exe" -action addoverwrite -res "akron.ico" -mask ICONGROUP,MAINICON,
-          Compress-Archive -Path "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}/*" -Destination "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip"
+          
+          $outputDir = "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}"
+          $sourceExe = "target\${{ matrix.target }}\release\akron-gui.exe"
+          $targetExe = "$outputDir\akron.exe"          
+
+          $reshackCmd = """C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe"" -open ""$sourceExe"" -save ""$targetExe"" -action addoverwrite -res ""akron.ico"" -mask ICONGROUP,MAINICON,"
+          Write-Host "Command: $reshackCmd"
+          cmd /c $reshackCmd
+
+          $zipFile = "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip"
+          7z a -tzip $zipFile $outputDir
 
       - name: Create GitHub Release
         id: create_release
