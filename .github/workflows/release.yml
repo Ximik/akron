@@ -143,7 +143,7 @@ jobs:
           $targetExe = "$outputDir\akron.exe"          
 
           $reshackCmd = """C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe"" -open ""$sourceExe"" -save ""$targetExe"" -action addoverwrite -res ""akron.ico"" -mask ICONGROUP,MAINICON,"
-          Write-Host "Command: $reshackCmd"
+          Write-Host "$reshackCmd"
           cmd /c $reshackCmd
 
           $zipFile = "akron-${{ env.TAG }}-${{ env.OS }}-${{ env.ARCH }}.zip"

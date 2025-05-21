@@ -4713,8 +4713,8 @@ dependencies = [
 
 [[package]]
 name = "spacedb"
-version = "0.0.6"
-source = "git+https://github.com/Ximik/spacedb?branch=windows-fix#7d95990102750aeacd2cb1619be752ff49c0baae"
+version = "0.0.7"
+source = "git+https://github.com/spacesprotocol/spacedb#9496b2259df485f969b5d61f5445328fd8efe0ce"
 dependencies = [
  "bincode",
  "hex",
@@ -4725,7 +4725,7 @@ dependencies = [
 [[package]]
 name = "spaces_client"
 version = "0.0.7"
-source = "git+https://github.com/Ximik/spaces.git?branch=windows-fix#0245f951b04d1dc7f6ef453d410e38e4112aad0b"
+source = "git+https://github.com/spacesprotocol/spaces.git#646c3126f3fdca59ec6793db4b4e5eb164436608"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
@@ -4755,7 +4755,7 @@ dependencies = [
 [[package]]
 name = "spaces_protocol"
 version = "0.0.7"
-source = "git+https://github.com/Ximik/spaces.git?branch=windows-fix#0245f951b04d1dc7f6ef453d410e38e4112aad0b"
+source = "git+https://github.com/spacesprotocol/spaces.git#646c3126f3fdca59ec6793db4b4e5eb164436608"
 dependencies = [
  "bincode",
  "bitcoin",
@@ -4766,7 +4766,7 @@ dependencies = [
 [[package]]
 name = "spaces_wallet"
 version = "0.0.7"
-source = "git+https://github.com/Ximik/spaces.git?branch=windows-fix#0245f951b04d1dc7f6ef453d410e38e4112aad0b"
+source = "git+https://github.com/spacesprotocol/spaces.git#646c3126f3fdca59ec6793db4b4e5eb164436608"
 dependencies = [
  "anyhow",
  "bdk_wallet",

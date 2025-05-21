@@ -10,6 +10,6 @@ edition = "2021"
 lto = true
 
 [workspace.dependencies]
-spaces_client = { git = "https://github.com/Ximik/spaces.git", branch = "windows-fix" }
-spaces_protocol = { git = "https://github.com/Ximik/spaces.git", branch = "windows-fix" }
-spaces_wallet = { git = "https://github.com/Ximik/spaces.git", branch = "windows-fix" }
+spaces_client = { git = "https://github.com/spacesprotocol/spaces.git" }
+spaces_protocol = { git = "https://github.com/spacesprotocol/spaces.git" }
+spaces_wallet = { git = "https://github.com/spacesprotocol/spaces.git" }
