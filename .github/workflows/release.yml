@@ -129,16 +129,13 @@ jobs:
           $zipFile = "$bundleName.zip"
           7z a -tzip $zipFile $bundleName
 
-          $env:TAG = "${{ env.TAG }}"
           $env:BUNDLE_NAME = $bundleName
-          $wixVersion = if ($env:TAG -match "^v?(\d+)\.(\d+)\.(\d+)") {
+          $env:VERSION = if ($env:TAG -match "^v?(\d+)\.(\d+)\.(\d+)") {
             "$($matches[1]).$($matches[2]).$($matches[3]).0"
           } else {
             "0.0.0.1"
-          }
-          $env:WIX_VERSION = $wixVersion
-          
-          (Get-Content ".github\akron.wxs.template") -replace '\$TAG', $env:TAG -replace '\$BUNDLE_NAME', $env:BUNDLE_NAME -replace '\$WIX_VERSION', $env:WIX_VERSION | Out-File -FilePath "akron.wxs" -Encoding UTF8
+          }          
+          (Get-Content ".github\akron.wxs.template") -replace '\$VERSION', $env:VERSION -replace '\$BUNDLE_NAME', $env:BUNDLE_NAME | Out-File -FilePath "akron.wxs" -Encoding UTF8
           
           & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" akron.wxs
           if ($LASTEXITCODE -eq 0) {
