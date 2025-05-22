@@ -131,11 +131,24 @@ jobs:
 
           $env:TAG = "${{ env.TAG }}"
           $env:BUNDLE_NAME = $bundleName
-          (Get-Content ".github\akron.wxs.template") -replace '\$TAG', $env:TAG -replace '\$BUNDLE_NAME', $env:BUNDLE_NAME | Out-File -FilePath "akron.wxs" -Encoding UTF8
+          $wixVersion = if ($env:TAG -match "^v?(\d+)\.(\d+)\.(\d+)") {
+            "$($matches[1]).$($matches[2]).$($matches[3]).0"
+          } else {
+            # For dev builds, use current date as version
+            $date = Get-Date
+            "$($date.Year).$($date.Month).$($date.Day).$($date.Hour)"
+          }
+          $env:WIX_VERSION = $wixVersion
+          
+          (Get-Content ".github\akron.wxs.template") -replace '\$TAG', $env:TAG -replace '\$BUNDLE_NAME', $env:BUNDLE_NAME -replace '\$WIX_VERSION', $env:WIX_VERSION | Out-File -FilePath "akron.wxs" -Encoding UTF8
           
           & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" akron.wxs
-          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" -ext WixUIExtension akron.wixobj -o "$bundleName.msi"
-
+          if ($LASTEXITCODE -eq 0) {
+            & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" -ext WixUIExtension akron.wixobj -o "$bundleName.msi"
+          } else {
+            Write-Error "Candle.exe failed with exit code $LASTEXITCODE"
+            exit 1
+          }
 
       - name: Find release artifacts
         id: find_artifacts
