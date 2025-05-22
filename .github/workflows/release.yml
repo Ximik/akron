@@ -138,12 +138,8 @@ jobs:
           (Get-Content ".github\akron.wxs.template") -replace '\$VERSION', $env:VERSION -replace '\$BUNDLE_NAME', $env:BUNDLE_NAME | Out-File -FilePath "akron.wxs" -Encoding UTF8
           
           & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" akron.wxs
-          if ($LASTEXITCODE -eq 0) {
-            & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" -ext WixUIExtension akron.wixobj -o "$bundleName.msi"
-          } else {
-            Write-Error "Candle.exe failed with exit code $LASTEXITCODE"
-            exit 1
-          }
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" -ext WixUIExtension akron.wixobj -o "$bundleName.msi"
+          Remove-Item -Path "$bundleName.wixpdb" -ErrorAction SilentlyContinue
 
       - name: Find release artifacts
         id: find_artifacts
