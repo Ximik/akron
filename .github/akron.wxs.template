@@ -7,6 +7,7 @@
     
     <Feature Id="ProductFeature" Title="Akron" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ShortcutComponents" />
     </Feature>
     
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -20,11 +21,20 @@
     
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="MainExecutable" Guid="*">
-        <File Id="AkronExe" Source="$BUNDLE_NAME\akron.exe" KeyPath="yes">
-          <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Akron" WorkingDirectory="INSTALLFOLDER" Icon="AkronIcon" IconIndex="0" Advertise="yes" />
-        </File>
+        <File Id="AkronExe" Source="$BUNDLE_NAME\akron.exe" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+    
+    <ComponentGroup Id="ShortcutComponents" Directory="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="*">
+        <Shortcut Id="ApplicationStartMenuShortcut" 
+                  Name="Akron" 
+                  Target="[INSTALLFOLDER]akron.exe" 
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AkronIcon" 
+                  IconIndex="0" />
         <RemoveFolder Id="ApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall"/>
-        <RegistryValue Root="HKLM" Key="Software\Impervious\Akron" Name="installed" Type="integer" Value="1" KeyPath="no"/>
+        <RegistryValue Root="HKLM" Key="Software\Impervious\Akron" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
     </ComponentGroup>
     
