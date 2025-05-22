@@ -21,13 +21,13 @@
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="MainExecutable" Guid="*">
         <File Id="AkronExe" Source="$BUNDLE_NAME\akron.exe" KeyPath="yes">
-          <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Akron" WorkingDirectory="INSTALLFOLDER" Icon="AkronExeIcon" IconIndex="0" Advertise="yes" />
+          <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Akron" WorkingDirectory="INSTALLFOLDER" Icon="AkronIcon" IconIndex="0" Advertise="yes" />
         </File>
         <RemoveFolder Id="ApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall"/>
         <RegistryValue Root="HKLM" Key="Software\Impervious\Akron" Name="installed" Type="integer" Value="1" KeyPath="no"/>
       </Component>
     </ComponentGroup>
     
-    <Icon Id="AkronExeIcon" SourceFile="$BUNDLE_NAME\akron.exe" />
+    <Icon Id="AkronIcon" SourceFile="akron.ico" />
   </Product>
 </Wix>
