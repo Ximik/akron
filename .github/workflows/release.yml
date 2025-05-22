@@ -134,9 +134,7 @@ jobs:
           $wixVersion = if ($env:TAG -match "^v?(\d+)\.(\d+)\.(\d+)") {
             "$($matches[1]).$($matches[2]).$($matches[3]).0"
           } else {
-            # For dev builds, use current date as version
-            $date = Get-Date
-            "$($date.Year).$($date.Month).$($date.Day).$($date.Hour)"
+            "0.0.0.1"
           }
           $env:WIX_VERSION = $wixVersion
           
