@@ -34,7 +34,7 @@
                   Icon="AkronIcon" 
                   IconIndex="0" />
         <RemoveFolder Id="ApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall"/>
-        <RegistryValue Root="HKLM" Key="Software\Impervious\Akron" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        <RegistryValue Root="HKCU" Key="Software\Impervious\Akron" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
     </ComponentGroup>
     
