@@ -61,12 +61,8 @@ jobs:
           fi
           if [[ "${{ matrix.target }}" == *"aarch64"* ]]; then
             echo "ARCH=arm64" >> $GITHUB_ENV
-            echo "PKG_ARCH=arm64" >> $GITHUB_ENV
-            echo "RPM_ARCH=aarch64" >> $GITHUB_ENV
           else
             echo "ARCH=x86_64" >> $GITHUB_ENV
-            echo "PKG_ARCH=amd64" >> $GITHUB_ENV
-            echo "RPM_ARCH=x86_64" >> $GITHUB_ENV
           fi
 
       - name: Set bundle name
@@ -91,9 +87,10 @@ jobs:
         run: |
           cargo build --bin akron-gui --release --target ${{ matrix.target }}
 
-      - name: Create Linux app bundle
+      - name: Create Linux bundle and packages
         if: env.OS == 'linux'
         run: |
+          # Linux bundle
           mkdir -p ${{ env.BUNDLE_NAME }}/bin
           mkdir -p ${{ env.BUNDLE_NAME }}/share/applications
           mkdir -p ${{ env.BUNDLE_NAME }}/share/icons/hicolor/64x64/apps
@@ -104,46 +101,30 @@ jobs:
 
           tar -czf ${{ env.BUNDLE_NAME }}.tar.gz ${{ env.BUNDLE_NAME }}
 
-      - name: Prepare Linux packagings
-        if: env.OS == 'linux'
-        run: |
+          # deb package
           mkdir -p packaging/deb/usr
+          cp -r ${{ env.BUNDLE_NAME }}/* packaging/deb/usr/
+
           mkdir -p packaging/deb/DEBIAN
-          mkdir -p packaging/rpm/usr
-          
-          cp -r ${{ env.BUNDLE_NAME }}/* packaging/deb/usr/
-          cp -r ${{ env.BUNDLE_NAME }}/* packaging/deb/usr/
-          
           envsubst < .github/control.template > packaging/deb/DEBIAN/control
           cp .github/postinst packaging/deb/DEBIAN/postinst
           chmod 755 packaging/deb/DEBIAN/postinst
           cp .github/postrm packaging/deb/DEBIAN/postrm
           chmod 755 packaging/deb/DEBIAN/postrm
-          
+          dpkg-deb --build packaging/deb ${{ env.BUNDLE_NAME }}.deb
+
+          # rpm package
+          mkdir -p packaging/rpm/usr
+          cp -r ${{ env.BUNDLE_NAME }}/* packaging/rpm/usr/
           envsubst < .github/akron.spec.template > packaging/rpm/akron.spec
 
-      - name: Build DEB package
-        if: env.OS == 'linux'
-        uses: jiro4989/build-deb-action@v3
-        with:
-          package: akron
-          package_root: packaging/deb
-          maintainer: 'Impervious <support@impervious.com>'
-          version: ${{ env.VERSION }}
-          arch: '${{ env.PKG_ARCH }}'
-          desc: 'Bitcoin wallet with Spaces protocol support'
-
-      - name: Build RPM package
-        if: env.OS == 'linux'
-        uses: jiro4989/build-rpm-action@v2
-        with:
-          summary: 'Bitcoin wallet with Spaces protocol support'
-          package: akron
-          package_root: packaging/rpm
-          maintainer: 'Impervious <support@impervious.com>'
-          version: ${{ env.VERSION }}
-          arch: '${{ env.RPM_ARCH }}'
-          desc: 'Bitcoin wallet with Spaces protocol support'
+          sudo apt-get update
+          sudo apt-get install -y rpm
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          tar czf ~/rpmbuild/SOURCES/akron-${{ env.VERSION }}.tar.gz -C packaging/rpm .
+          cp packaging/rpm/akron.spec ~/rpmbuild/SPECS/
+          rpmbuild -bb ~/rpmbuild/SPECS/akron.spec --define "_topdir $HOME/rpmbuild"
+          find ~/rpmbuild/RPMS -name "*.rpm" -exec cp {} ${{ env.BUNDLE_NAME }}.rpm \;
 
       - name: Install create-dmg
         if: env.OS == 'darwin'
@@ -217,7 +198,7 @@ jobs:
           echo "Verifying stapled DMG..."
           xcrun stapler validate ${{ env.BUNDLE_NAME }}.dmg
 
-      - name: Create Windows bundle
+      - name: Create Windows bundle and installer
         if: env.OS == 'windows'
         shell: powershell
         run: |
@@ -249,7 +230,7 @@ jobs:
         id: find_artifacts
         shell: bash
         run: |
-          artifacts=$(find . -maxdepth 1 \( -name "${{ env.BUNDLE_NAME }}.*" -o -name "*.deb" -o -name "*.rpm" \) -type f)
+          artifacts=$(find . -maxdepth 1 -name "${{ env.BUNDLE_NAME }}.*" -type f | sort)
 
           echo "Found artifacts:"
           echo "$artifacts"

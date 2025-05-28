@@ -2,6 +2,6 @@ Package: akron
 Version: $VERSION
 Section: utils
 Priority: optional
-Architecture: $PKG_ARCH
+Architecture: $ARCH
 Maintainer: Impervious <support@impervious.com>
 Description: Bitcoin wallet with Spaces protocol support
