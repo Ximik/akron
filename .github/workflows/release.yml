@@ -62,7 +62,7 @@ jobs:
           if [[ "${{ matrix.target }}" == *"aarch64"* ]]; then
             echo "ARCH=arm64" >> $GITHUB_ENV
           else
-            echo "ARCH=x86_64" >> $GITHUB_ENV
+            echo "ARCH=amd64" >> $GITHUB_ENV
           fi
 
       - name: Set bundle name
