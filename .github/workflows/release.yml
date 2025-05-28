@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - '*.*.*'
   workflow_dispatch:
 
 jobs:
@@ -39,7 +39,6 @@ jobs:
 
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             TAG_VERSION=${GITHUB_REF##*/}
-            TAG_VERSION=${TAG_VERSION#v}
 
             if [[ "$VERSION" != "$TAG_VERSION" ]]; then
               echo "ERROR: Version mismatch!"
