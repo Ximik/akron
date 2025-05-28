@@ -99,7 +99,7 @@ jobs:
           mkdir -p ${{ env.BUNDLE_NAME }}/share/icons/hicolor/64x64/apps
 
           cp target/${{ matrix.target }}/release/akron-gui ${{ env.BUNDLE_NAME }}/bin/akron
-          cp .github/akron.desktop.template ${{ env.BUNDLE_NAME }}/share/applications/
+          cp .github/akron.desktop ${{ env.BUNDLE_NAME }}/share/applications/
           cp assets/akron.png ${{ env.BUNDLE_NAME }}/share/icons/hicolor/64x64/apps/
 
           tar -czf ${{ env.BUNDLE_NAME }}.tar.gz ${{ env.BUNDLE_NAME }}
