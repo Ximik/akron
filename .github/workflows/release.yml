@@ -82,8 +82,12 @@ jobs:
       - name: Install cross-compilation tools
         if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
+          apt-get update
+          apt-get install -y gcc-aarch64-linux-gnu
+          dpkg --add-architecture arm64
+          apt-get update
+          apt-get install -y libssl-dev:arm64
+          echo "PKG_CONFIG_ALLOW_CROSS=1" >> $GITHUB_ENV
 
       - name: Build release binary
         run: |
@@ -120,8 +124,6 @@ jobs:
           
           cp assets/akron.png packaging/deb/usr/share/icons/hicolor/64x64/apps/
           cp assets/akron.png packaging/rpm/usr/share/icons/hicolor/64x64/apps/
-
-          export VERSION="${{ env.VERSION }}"
           
           envsubst < .github/control.template > packaging/deb/DEBIAN/control
           cp .github/postinst packaging/deb/DEBIAN/postinst
