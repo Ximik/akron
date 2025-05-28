@@ -78,7 +78,6 @@ jobs:
       - name: Install cross-compilation tools
         if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: |
-          sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu
 
       - name: Build release binary
@@ -114,17 +113,9 @@ jobs:
           dpkg-deb --build packaging/deb ${{ env.BUNDLE_NAME }}.deb
 
           # rpm package
-          mkdir -p packaging/rpm/usr
-          cp -r ${{ env.BUNDLE_NAME }}/* packaging/rpm/usr/
-          envsubst < .github/akron.spec.template > packaging/rpm/akron.spec
-
-          sudo apt-get update
-          sudo apt-get install -y rpm
-          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          tar czf ~/rpmbuild/SOURCES/akron-${{ env.VERSION }}.tar.gz -C packaging/rpm .
-          cp packaging/rpm/akron.spec ~/rpmbuild/SPECS/
-          rpmbuild -bb ~/rpmbuild/SPECS/akron.spec --define "_topdir $HOME/rpmbuild"
-          find ~/rpmbuild/RPMS -name "*.rpm" -exec cp {} ${{ env.BUNDLE_NAME }}.rpm \;
+          sudo apt-get install -y alien
+          sudo alien --to-rpm --scripts ${{ env.BUNDLE_NAME }}.deb
+          mv *.rpm ${{ env.BUNDLE_NAME }}.rpm
 
       - name: Install create-dmg
         if: env.OS == 'darwin'
