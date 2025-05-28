@@ -1,0 +1,29 @@
+Name:           akron
+Version:        $VERSION
+Release:        0
+Summary:        Bitcoin wallet with Spaces protocol support
+
+License:        Apache 2.0
+URL:            https://github.com/imperviousinc/akron
+
+%description
+Akron is a Bitcoin wallet application with support for the Spaces protocol.
+
+%files
+%{_bindir}/akron
+%{_datadir}/applications/akron.desktop
+%{_datadir}/icons/hicolor/64x64/apps/akron.png
+
+%post
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database -q /usr/share/applications 2>/dev/null || true
+fi
+
+%postun
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database -q /usr/share/applications 2>/dev/null || true
+fi
+
+%changelog
+* $(date +'%a %b %d %Y') Impervious <support@impervious.com> - $VERSION-0
+- Release $VERSION
