@@ -113,18 +113,10 @@ jobs:
           
           cp -r ${{ env.BUNDLE_NAME }}/* packaging/deb/usr/
           cp -r ${{ env.BUNDLE_NAME }}/* packaging/deb/usr/
-
-          cp target/${{ matrix.target }}/release/akron-gui packaging/deb/usr/bin/akron
-          cp target/${{ matrix.target }}/release/akron-gui packaging/rpm/usr/bin/akron
-
-          cp .github/akron.desktop.template packaging/deb/usr/share/applications/
-          cp .github/akron.desktop.template packaging/rpm/usr/share/applications/
-          
-          cp assets/akron.png packaging/deb/usr/share/icons/hicolor/64x64/apps/
-          cp assets/akron.png packaging/rpm/usr/share/icons/hicolor/64x64/apps/
           
           envsubst < .github/control.template > packaging/deb/DEBIAN/control
           cp .github/postinst packaging/deb/DEBIAN/postinst
+          chmod 755 packaging/deb/DEBIAN/postinst
           cp .github/postrm packaging/deb/DEBIAN/postrm
           chmod 755 packaging/deb/DEBIAN/postrm
           
