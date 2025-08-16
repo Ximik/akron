@@ -124,9 +124,9 @@ jobs:
           cp -r ${{ env.BUNDLE_NAME }}/* packaging/deb/usr/
           mkdir -p packaging/deb/DEBIAN
           if [[ "${{ env.ARCH }}" == "aarch64" ]]; then
-            DEB_ARCH="arm64"
+            export DEB_ARCH="arm64"
           else
-            DEB_ARCH="amd64"
+            export DEB_ARCH="amd64"
           fi
           envsubst < .github/control.template > packaging/deb/DEBIAN/control
           cp .github/postinst packaging/deb/DEBIAN/postinst
