@@ -15,9 +15,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             target: x86_64-unknown-linux-gnu
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             target: aarch64-unknown-linux-gnu
           # - os: macos-latest
           #   target: aarch64-apple-darwin
@@ -84,6 +84,26 @@ jobs:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
         run: |
           cargo build --bin akron-gui --release --target ${{ matrix.target }}
+
+      - name: Detect glibc version requirement
+        if: env.OS == 'linux'
+        shell: bash
+        run: |
+          BINARY_PATH="target/${{ matrix.target }}/release/akron-gui"
+          
+          if [[ "${{ matrix.target }}" == "aarch64-unknown-linux-gnu" ]]; then
+            GLIBC_VERSION=$(aarch64-linux-gnu-objdump -T "$BINARY_PATH" | grep -oE 'GLIBC_[0-9]+\.[0-9]+' | sort -V | tail -n1 | sed 's/GLIBC_//')
+          else
+            GLIBC_VERSION=$(objdump -T "$BINARY_PATH" | grep -oE 'GLIBC_[0-9]+\.[0-9]+' | sort -V | tail -n1 | sed 's/GLIBC_//')
+          fi
+          
+          if [ -z "$GLIBC_VERSION" ]; then
+            echo "ERROR: Could not detect glibc version from binary"
+            exit 1
+          fi
+          
+          echo "Detected minimum glibc version: $GLIBC_VERSION"
+          echo "GLIBC_VERSION=$GLIBC_VERSION" >> $GITHUB_ENV
 
       - name: Create Linux bundle and packages
         if: env.OS == 'linux'
