@@ -2,7 +2,7 @@ Package: akron
 Version: $VERSION
 Section: utils
 Priority: optional
-Architecture: $ARCH
+Architecture: $DEB_ARCH
 Depends: libc6 (>= $GLIBC_VERSION)
 Maintainer: Impervious <support@impervious.com>
 Description: Bitcoin wallet with Spaces protocol support
