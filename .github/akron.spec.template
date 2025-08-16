@@ -1,0 +1,47 @@
+Name:           akron
+Version:        $VERSION
+Release:        1
+Summary:        Bitcoin wallet with Spaces protocol support
+License:        Apache-2.0
+Source0:        akron-$VERSION.tar.gz
+BuildArch:      $RPM_ARCH
+Requires:       glibc >= $GLIBC_VERSION
+
+%description
+Bitcoin wallet with Spaces protocol support
+
+%prep
+%setup -q -c
+
+%install
+rm -rf %{buildroot}
+mkdir -p %{buildroot}
+cp -r * %{buildroot}/
+
+%files
+%defattr(-,root,root,-)
+/usr/bin/akron
+/usr/share/applications/akron.desktop
+/usr/share/icons/hicolor/*/apps/akron.png
+
+%post
+# Update desktop database
+if [ -x /usr/bin/update-desktop-database ]; then
+    /usr/bin/update-desktop-database /usr/share/applications
+fi
+
+# Update icon cache
+if [ -x /usr/bin/gtk-update-icon-cache ]; then
+    /usr/bin/gtk-update-icon-cache -f -t /usr/share/icons/hicolor
+fi
+
+%postun
+# Update desktop database
+if [ -x /usr/bin/update-desktop-database ]; then
+    /usr/bin/update-desktop-database /usr/share/applications
+fi
+
+# Update icon cache
+if [ -x /usr/bin/gtk-update-icon-cache ]; then
+    /usr/bin/gtk-update-icon-cache -f -t /usr/share/icons/hicolor
+fi
