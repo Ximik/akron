@@ -90,7 +90,7 @@ jobs:
         shell: bash
         run: |
           BINARY_PATH="target/${{ matrix.target }}/release/akron-gui"
-          
+
           if [[ "${{ matrix.target }}" == "aarch64-unknown-linux-gnu" ]]; then
             GLIBC_VERSION=$(aarch64-linux-gnu-objdump -T "$BINARY_PATH" | grep -oE 'GLIBC_[0-9]+\.[0-9]+' | sort -V | tail -n1 | sed 's/GLIBC_//')
           else
@@ -122,7 +122,6 @@ jobs:
           # deb package
           mkdir -p packaging/deb/usr
           cp -r ${{ env.BUNDLE_NAME }}/* packaging/deb/usr/
-
           mkdir -p packaging/deb/DEBIAN
           envsubst < .github/control.template > packaging/deb/DEBIAN/control
           cp .github/postinst packaging/deb/DEBIAN/postinst
@@ -132,9 +131,16 @@ jobs:
           dpkg-deb --build packaging/deb ${{ env.BUNDLE_NAME }}.deb
 
           # rpm package
-          sudo apt-get install -y alien
-          sudo alien --to-rpm --scripts ${{ env.BUNDLE_NAME }}.deb
-          mv *.rpm ${{ env.BUNDLE_NAME }}.rpm
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          tar -czf ~/rpmbuild/SOURCES/akron-${{ env.VERSION }}.tar.gz -C ${{ env.BUNDLE_NAME }} .
+          if [[ "${{ env.ARCH }}" == "arm64" ]]; then
+            RPM_ARCH="aarch64"
+          else
+            RPM_ARCH="x86_64"
+          fi
+          envsubst < .github/akron.spec.template > ~/rpmbuild/SPECS/akron.spec
+          rpmbuild -bb ~/rpmbuild/SPECS/akron.spec
+          cp ~/rpmbuild/RPMS/$RPM_ARCH/akron-${{ env.VERSION }}-1.$RPM_ARCH.rpm ${{ env.BUNDLE_NAME }}.rpm
 
       - name: Install create-dmg
         if: env.OS == 'darwin'
