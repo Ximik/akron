@@ -171,7 +171,7 @@ impl State {
                             ConfigBackend::Akrond { .. } => {}
                             ConfigBackend::Bitcoind { network, .. }
                             | ConfigBackend::Spaced { network, .. } => {
-                                if server_info.network != network.to_string() {
+                                if server_info.network != *network {
                                     self.client = None;
                                     self.connecting = false;
                                     self.error = Some("Wrong network".to_string());
