@@ -3,5 +3,6 @@ Version: $VERSION
 Section: utils
 Priority: optional
 Architecture: $ARCH
+Depends: libwayland-client0, libxkbcommon0
 Maintainer: Impervious <support@impervious.com>
 Description: Bitcoin wallet with Spaces protocol support
