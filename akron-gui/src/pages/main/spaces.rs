@@ -113,6 +113,7 @@ impl State {
             Message::CopyOutpointPress(outpoint) => Action::WriteClipboard(outpoint.to_string()),
             Message::CopyPublicKeyPress(pubkey) => Action::WriteClipboard(pubkey.to_string()),
             Message::SearchInput(search) => {
+                let search = search.to_lowercase();
                 if is_slabel_input(&search) {
                     self.search = search;
                     if let Some(slabel) = slabel_from_str(&self.search) {
