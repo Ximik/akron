@@ -57,7 +57,7 @@ dependencies = [
 
 [[package]]
 name = "akron-gui"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "akrond",
  "directories 5.0.1",
@@ -80,7 +80,7 @@ dependencies = [
 
 [[package]]
 name = "akrond"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhow",
  "directories 6.0.0",
@@ -4612,8 +4612,8 @@ dependencies = [
 
 [[package]]
 name = "spaces_client"
-version = "0.0.7"
-source = "git+https://github.com/spacesprotocol/spaces.git#fe2971b3ab378edba568e2c3161329385c1814a5"
+version = "0.0.9"
+source = "git+https://github.com/spacesprotocol/spaces.git#83fce1ee7bfb576d4dcda7c44458ef51ec57b383"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
@@ -4644,8 +4644,8 @@ dependencies = [
 
 [[package]]
 name = "spaces_protocol"
-version = "0.0.7"
-source = "git+https://github.com/spacesprotocol/spaces.git#fe2971b3ab378edba568e2c3161329385c1814a5"
+version = "0.0.9"
+source = "git+https://github.com/spacesprotocol/spaces.git#83fce1ee7bfb576d4dcda7c44458ef51ec57b383"
 dependencies = [
  "bincode",
  "bitcoin",
@@ -4655,8 +4655,8 @@ dependencies = [
 
 [[package]]
 name = "spaces_wallet"
-version = "0.0.7"
-source = "git+https://github.com/spacesprotocol/spaces.git#fe2971b3ab378edba568e2c3161329385c1814a5"
+version = "0.0.9"
+source = "git+https://github.com/spacesprotocol/spaces.git#83fce1ee7bfb576d4dcda7c44458ef51ec57b383"
 dependencies = [
  "anyhow",
  "bdk_wallet",
@@ -5638,7 +5638,7 @@ dependencies = [
  "js-sys",
  "log",
  "naga",
- "parking_lot 0.12.3",
+ "parking_lot 0.11.2",
  "profiling",
  "raw-window-handle",
  "smallvec",
@@ -5666,7 +5666,7 @@ dependencies = [
  "log",
  "naga",
  "once_cell",
- "parking_lot 0.12.3",
+ "parking_lot 0.11.2",
  "profiling",
  "raw-window-handle",
  "rustc-hash 1.1.0",
@@ -5708,7 +5708,7 @@ dependencies = [
  "ndk-sys 0.5.0+25.2.9519653",
  "objc",
  "once_cell",
- "parking_lot 0.12.3",
+ "parking_lot 0.11.2",
  "profiling",
  "range-alloc",
  "raw-window-handle",
