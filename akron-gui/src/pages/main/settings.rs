@@ -137,6 +137,8 @@ impl State {
                 ]
                 .spacing(40),
                 column![
+                    text_big("Frontend"),
+                    column![row![text_bold("Version: "), text(env!("CARGO_PKG_VERSION"))]].spacing(20),
                     text_big("Backend"),
                     column![
                         row![text_bold("Network: "), text(network.to_string()),],
